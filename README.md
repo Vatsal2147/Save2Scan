@@ -1,4 +1,4 @@
-`# Scan2Save
+# Scan2Save
 
 ### When you cannot speak, your card can help.
 
