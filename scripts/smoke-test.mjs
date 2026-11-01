@@ -1,0 +1,16 @@
+import assert from "node:assert/strict";
+const origin=process.env.TEST_ORIGIN||"http://127.0.0.1:5173";
+const homepage=await fetch(origin);
+assert.equal(homepage.status,200);
+assert.match(await homepage.text(),/When you/);
+const invalid=await fetch(`${origin}/api/profiles`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:""})});
+assert.equal(invalid.status,400);
+const crossOrigin=await fetch(`${origin}/api/profiles`,{method:"POST",headers:{Origin:"https://unrelated.example","Content-Type":"application/json"},body:"{}"});
+assert.equal(crossOrigin.status,403);
+const profile=await fetch(`${origin}/p/93ca9201-0f13-4a3b-8036-f03c92cc1146`);
+assert.equal(profile.status,200);
+const html=await profile.text();
+assert.match(html,/Demo Student/);
+assert.match(html,/tel:0000000000/);
+assert.match(html,/Not provided/);
+console.log("PASS: homepage, invalid-input rejection, cross-origin rejection, saved profile and contact link. No Sarvam request made.");
